@@ -7,10 +7,10 @@ from functions import plot_intensities_wavelenght, check_wavenumbers, find_group
 
 PLOT_CURVES=True
 PLOT_LDA_DENSITY=True
-PLOT_LDA_HISTOGRAM=False
+PLOT_LDA_HISTOGRAM=True
 LOGY=False
-R=0.6 # 0.70, 0.85 provoca separação perfeita com LDA; 0.60 dá sobreposição; 0.90 também; usando min como função de agregação; com min, mean e max separa para R=0.85
-def agg_function(x): return np.max(x) #np.abs(np.max(x)-np.min(x))
+R=0.85 # 0.70, 0.85 provoca separação perfeita com LDA; 0.60 dá sobreposição; 0.90 também; usando min como função de agregação; com min, mean e max separa para R=0.85
+def agg_function(x): return np.mean(x) #np.abs(np.max(x)-np.min(x))
 
 # Load data with error handling
 try:
@@ -42,6 +42,7 @@ adjacency=np.abs(corr) > R
 
 # groups
 groups=find_groups(adjacency)
+print([g[0] for g in groups])
 print('number of groups', len(groups))
 
 # compute group averages
