@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.cm as cm
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 import seaborn as sns
-import umap
+#import umap
 
 def plot_lda_score_histogram(df):
     """
@@ -80,14 +80,14 @@ def lda_1D_visualize(df,  sample_species, PLOT):
     return pd.Series(X_proj, index=X.index, name='LDA_1D_score')
 
 
-def plot_curves_by_species(df,sample_species, LOGY):
+def plot_curves_by_species(df,sample_species, LOGY,R):
     # Merge species info into pivot_df (which has 'sample' as index or column)
     # If 'sample' is an index in pivot_df:
     pivot_df = df.join(sample_species)
     # Optional: reset index if you want 'sample' as a column
     pivot_df.reset_index(inplace=True)
     # plot
-    plot_intensities_wavelenght(pivot_df, LOGY)
+    plot_intensities_wavelenght(pivot_df, LOGY,R)
 
 def average_per_group(df,L,agg_function):
     # df: original DataFrame with samples as rows and wavelengths (strings) as columns
@@ -125,7 +125,7 @@ def check_wavenumbers(df):
         if seq != first_seq:
             raise SystemExit(f"Mismatch found:\nSample1: {first_seq}\nSample2: {seq}")
 
-def plot_intensities_wavelenght(pivot_df,LOGY):
+def plot_intensities_wavelenght(pivot_df,LOGY,R):
     # Extract wavelength columns (exclude 'sample' and 'species')
     exclude_cols = {'sample', 'species'}
     wavelength_cols = [col for col in pivot_df.columns if col not in exclude_cols]
@@ -151,7 +151,7 @@ def plot_intensities_wavelenght(pivot_df,LOGY):
     legend_handles = [Line2D([0], [0], color=species_color_map[sp], lw=2, label=sp) for sp in species_list]
     plt.xlabel('Wavelength')
     plt.ylabel('Intensity')
-    plt.title('Intensity vs Wavelength Colored by Species')
+    plt.title(f'Intensity vs Wavelength: R={R}; {len(wavelength_cols)} groups')
     if LOGY: plt.yscale('log')  # Set y-axis to logarithmic scale
     plt.grid(True)
     plt.legend(handles=legend_handles, title='Species', bbox_to_anchor=(1.05, 1), loc='upper left')

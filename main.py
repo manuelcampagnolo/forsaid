@@ -5,8 +5,11 @@ import numpy as np
 from functions import plot_intensities_wavelenght, check_wavenumbers, find_groups, average_per_group, plot_curves_by_species, lda_1D_visualize, plot_lda_score_histogram
 
 
-PLOT=True
-R=0.85 # 0.70, 0.85 provoca separação perfeita com LDA; 0.60 dá sobreposição; 0.90 também; usando min como função de agregação; com min, mean e max separa para R=0.85
+PLOT_CURVES=True
+PLOT_LDA_DENSITY=True
+PLOT_LDA_HISTOGRAM=False
+LOGY=False
+R=0.6 # 0.70, 0.85 provoca separação perfeita com LDA; 0.60 dá sobreposição; 0.90 também; usando min como função de agregação; com min, mean e max separa para R=0.85
 def agg_function(x): return np.max(x) #np.abs(np.max(x)-np.min(x))
 
 # Load data with error handling
@@ -44,13 +47,14 @@ print('number of groups', len(groups))
 # compute group averages
 df=average_per_group(pivot_df,groups,agg_function) # 'sample' is the index
 
-if PLOT: plot_curves_by_species(df,sample_species, LOGY=True)
+if PLOT_CURVES: plot_curves_by_species(df,sample_species, LOGY,R)
 
-df['lda_score']= lda_1D_visualize(df,sample_species, PLOT=PLOT)      # get labels from species for LDA
+if PLOT_LDA_DENSITY: df['lda_score']= lda_1D_visualize(df,sample_species, PLOT=PLOT_LDA_DENSITY)      # get labels from species for LDA
 
 # add scores and species to df
 df = df.join(sample_species)
-print(df)
-plot_lda_score_histogram(df)
+print(df.sort_values(by=['species']))
+
+if PLOT_LDA_HISTOGRAM: plot_lda_score_histogram(df)
 
 #plot_umap(df,sample_species)
